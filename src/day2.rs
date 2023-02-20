@@ -45,8 +45,13 @@ impl FromStr for CommandWithValue {
     }
 }
 
-fn load_file() -> Vec<CommandWithValue> {
-    let input_file_path = Path::new(r"input_data\day2_example.txt");
+fn load_file(test_data: bool) -> Vec<CommandWithValue> {
+    let input_file_path: &Path;
+    if test_data {
+        input_file_path = Path::new(r"input_data\day2_example.txt");
+    } else {
+        input_file_path = Path::new(r"input_data\day2.txt");
+    }
     let out = common::load_file(input_file_path);
     let actual_out = out
         .iter()
@@ -56,14 +61,36 @@ fn load_file() -> Vec<CommandWithValue> {
 }
 
 pub fn solve_day2_base() -> u32 {
-    let out = load_file();
+    let out = load_file(false);
     let mut depth = 0;
     let mut horizontal = 0;
     for command_with_value in out {
         match command_with_value.command {
             Command::Forward => horizontal += command_with_value.value,
             Command::Down => depth += command_with_value.value,
-            Command::Up => depth -= command_with_value.value
+            Command::Up => depth -= command_with_value.value,
+        }
+    }
+    depth * horizontal
+}
+
+pub fn solve_day2_add(test_data: bool) -> u32 {
+    let out = load_file(test_data);
+    let mut depth = 0;
+    let mut horizontal = 0;
+    let mut aim = 0;
+    for command_with_value in out {
+        match command_with_value.command {
+            Command::Forward => {
+                horizontal += command_with_value.value;
+                depth += aim * command_with_value.value;
+            }
+            Command::Down => {
+                aim += command_with_value.value;
+            }
+            Command::Up => {
+                aim -= command_with_value.value;
+            }
         }
     }
     depth * horizontal
